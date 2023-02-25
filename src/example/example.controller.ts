@@ -8,13 +8,15 @@ import {
   Delete,
   HttpException,
   HttpStatus,
-  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ExampleService } from './example.service';
 import { CreateExampleDto } from './dto/create-example.dto';
 import { UpdateExampleDto } from './dto/update-example.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('example')
+@UseGuards(AuthGuard('jwt'))
 export class ExampleController {
   constructor(private readonly exampleService: ExampleService) {}
 
