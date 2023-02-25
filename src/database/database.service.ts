@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Neo4jService } from 'nest-neo4j/dist';
-import { CreateExampleDto } from 'src/example/dto/create-example.dto';
+import { createValuesString } from './utils/create-values-string.util';
 
 @Injectable()
 export class DatabaseService {
@@ -11,31 +11,56 @@ export class DatabaseService {
     return res.records[0].get('count');
   }
 
-  async createNode(label: string, data: object) {
-    let values = '{';
-    for (const key in data) {
-      values += `${key}: $${key}, `;
-    }
-    values = values.slice(0, -2);
-    values += '}';
-
+  async createNode(type: string, data: object) {
     const res = await this.database.write(
-      `CREATE (n:${label} ${values}) RETURN n`,
+      `CREATE (n:${type} ${createValuesString(data)}) RETURN n`,
       data,
     );
     return res.records[0].get('n');
   }
 
   async createRelation(
+    fromType: string,
     fromUuid: string,
+    toType: string,
     toUuid: string,
     relation: string,
-  ): Promise<void> {
-    await this.database.write(
-      `MATCH (a:Example {uuid: $fromUuid}), (b:Example {uuid: $toUuid})
+  ): Promise<any> {
+    return await this.database.write(
+      `MATCH (a:${fromType} {uuid: $fromUuid}), (b:${toType} {uuid: $toUuid})
       CREATE (a)-[r:${relation}]->(b)
       RETURN r`,
       { fromUuid, toUuid },
+    );
+  }
+
+  async updateNode(type: string, uuid: string, data: object) {
+    const res = await this.database.write(
+      `MATCH (n:${type} {uuid: $uuid}) SET n += ${createValuesString(
+        data,
+      )} RETURN n`,
+      { uuid, ...data },
+    );
+    return res.records[0].get('n');
+  }
+
+  async findAll(type: string) {
+    const res = await this.database.read(`MATCH (n:${type}) RETURN n`);
+    return res.records.map((record) => record.get('n'));
+  }
+
+  async findOne(type: string, uuid: string) {
+    const res = await this.database.read(
+      `MATCH (n:${type} {uuid: $uuid}) RETURN n`,
+      { uuid },
+    );
+    return res.records[0].get('n');
+  }
+
+  async deleteNode(type: string, uuid: string) {
+    return await this.database.write(
+      `MATCH (n:${type} {uuid: $uuid}) DETACH DELETE n`,
+      { uuid },
     );
   }
 }

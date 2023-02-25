@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateExampleDto } from './dto/create-example.dto';
 import { UpdateExampleDto } from './dto/update-example.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { Example } from './entities/example.entity';
 
 @Injectable()
 export class ExampleService {
@@ -12,23 +13,28 @@ export class ExampleService {
   }
 
   async createRelation(fromUuid: string, toUuid: string, relation: string) {
-    return this.database.createRelation(fromUuid, toUuid, relation);
+    return this.database.createRelation(
+      'Example',
+      fromUuid,
+      'Example',
+      toUuid,
+      relation,
+    );
   }
 
-  findAll() {
-    return this.database.getNodeCount();
-    // return `This action returns all example`;
+  async findAll() {
+    return this.database.findAll('Example');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} example`;
+  async findOne(uuid: string) {
+    return this.database.findOne('Example', uuid);
   }
 
-  update(id: number, updateExampleDto: UpdateExampleDto) {
-    return `This action updates a #${id} example`;
+  async update(uuid: string, updateExampleDto: UpdateExampleDto) {
+    return this.database.updateNode('Example', uuid, updateExampleDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} example`;
+  async remove(uuid: string) {
+    return this.database.deleteNode('Example', uuid);
   }
 }

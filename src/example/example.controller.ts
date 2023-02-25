@@ -8,6 +8,7 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  Put,
 } from '@nestjs/common';
 import { ExampleService } from './example.service';
 import { CreateExampleDto } from './dto/create-example.dto';
@@ -41,13 +42,12 @@ export class ExampleController {
 
   @Get()
   async findAll() {
-    const count = await this.exampleService.findAll();
-    return `There are ${count} nodes in the database.`;
+    return this.exampleService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.exampleService.findOne(+id);
+  @Get(':uuid')
+  findOne(@Param('uuid') uuid: string) {
+    return this.exampleService.findOne(uuid);
   }
 
   @Patch(':uuid')
@@ -55,11 +55,11 @@ export class ExampleController {
     @Param('uuid') uuid: string,
     @Body() updateExampleDto: UpdateExampleDto,
   ) {
-    return this.exampleService.update(+uuid, updateExampleDto);
+    return this.exampleService.update(uuid, updateExampleDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.exampleService.remove(+id);
+  @Delete(':uuid')
+  remove(@Param('uuid') uuid: string) {
+    return this.exampleService.remove(uuid);
   }
 }
