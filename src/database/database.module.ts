@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { Neo4jModule } from 'nest-neo4j';
 import { DatabaseService } from './database.service';
 
