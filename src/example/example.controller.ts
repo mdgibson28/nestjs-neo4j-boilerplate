@@ -15,8 +15,8 @@ import { CreateExampleDto } from './dto/create-example.dto';
 import { UpdateExampleDto } from './dto/update-example.dto';
 import { AuthGuard } from '@nestjs/passport';
 
-@Controller('example')
 @UseGuards(AuthGuard('jwt'))
+@Controller('example')
 export class ExampleController {
   constructor(private readonly exampleService: ExampleService) {}
 
