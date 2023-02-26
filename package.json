@@ -1,8 +1,9 @@
 {
   "name": "api",
   "version": "0.0.1",
-  "description": "",
+  "description": "NestJs Api starter template with Neo4j and Auth0.",
   "author": "",
+  "keywords": ["nestjs", "neo4j", "auth0", "typescript", "template", "api", "starter", "boilerplate"],
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
